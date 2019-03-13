@@ -29,8 +29,8 @@ public class SecurityConfig {
         .authorizeExchange()
         .pathMatchers(HttpMethod.GET, "/login").permitAll()
         .pathMatchers(HttpMethod.POST, "/login").permitAll()
-        .pathMatchers(HttpMethod.POST, "/user").permitAll()
-        .pathMatchers("/**").hasRole("USER")
+        .pathMatchers(HttpMethod.POST, "/users").permitAll()
+        .pathMatchers("/**").hasAuthority("USER")
         .and()
         .httpBasic();
     return http.build();

@@ -2,7 +2,6 @@ package com.ie.notes.service;
 
 import com.ie.notes.model.Note;
 import com.ie.notes.repository.NoteRepository;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -14,11 +13,11 @@ public class NoteService {
 
   private final NoteRepository noteRepository;
 
-  public Flux<Note> getByUserId(UUID userId) {
-    return noteRepository.findNoteByUserId(userId);
+  public Flux<Note> getByUsername(String username) {
+    return noteRepository.findNoteByUsername(username);
   }
 
-  public Mono<Note> get(UUID noteId) {
+  public Mono<Note> get(String noteId) {
     return noteRepository.findById(noteId);
   }
 

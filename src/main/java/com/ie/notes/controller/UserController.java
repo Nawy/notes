@@ -2,7 +2,6 @@ package com.ie.notes.controller;
 
 import com.ie.notes.model.User;
 import com.ie.notes.service.UserService;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +20,9 @@ public class UserController {
   private final UserService userService;
   private final PasswordEncoder passwordEncoder;
 
-  @GetMapping("/{userId}")
-  public Mono<User> get(@PathVariable("userId") UUID userId) {
-    return userService.get(userId);
+  @GetMapping("/{username}")
+  public Mono<User> get(@PathVariable("username") String username) {
+    return userService.getByUserName(username);
   }
 
   @PostMapping
