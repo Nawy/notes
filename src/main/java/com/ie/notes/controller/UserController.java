@@ -42,7 +42,7 @@ public class UserController {
 //    ;
     User user = UserMapper.INSTANCE.map(userDto);
     user.setUpdateDate(LocalDateTime.now());
-    userService.save(user);
+    return userService.save(user);
   }
 
   @PostMapping
