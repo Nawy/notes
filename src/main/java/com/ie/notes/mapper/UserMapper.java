@@ -11,9 +11,9 @@ public interface UserMapper {
 
   UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-  User map(UserCreateDto source);
+  User fromCreateDto(UserCreateDto source);
 
-  UserDto map(User source);
+  UserDto to(User source);
 
-  User map(UserDto source);
+  User from(UserDto source);
 }

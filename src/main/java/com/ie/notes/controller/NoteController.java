@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class NoteController implements AuthController {
 
@@ -24,12 +26,12 @@ public class NoteController implements AuthController {
       @PathVariable("username") String username,
       @PathVariable("noteId") String noteId
   ) {
-    return auth(username).flatMap(value -> noteService.get(noteId));
+    return auth(username).flatMap(details -> noteService.get(noteId));
   }
 
   @GetMapping("/users/{username}/notes")
   public Flux<Note> getByUserId(@PathVariable("username") String username) {
-    return auth(username).flatMapMany(value -> noteService.getByUsername(value.getUsername()));
+    return auth(username).flatMapMany(details -> noteService.getByUsername(details.getUsername()));
   }
 
   @PostMapping("/users/{username}/notes")

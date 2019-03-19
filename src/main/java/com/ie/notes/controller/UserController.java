@@ -19,38 +19,43 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/api/users")
+public class UserController implements AuthController {
 
   private final UserService userService;
   private final PasswordEncoder passwordEncoder;
 
   @GetMapping("/{username}")
   public Mono<User> get(@PathVariable("username") String username) {
-    return userService.getByUserName(username);
+    return auth(username).flatMap(v -> userService.getByUserName(username));
   }
 
   @PutMapping("/{username}")
-  public Mono<User> update(
+  public Mono<UserDto> update(
       @PathVariable("username") String username,
       @RequestBody UserDto userDto
   ) {
-//    userService.getByUserName(username)
-//        .switchIfEmpty(Mono.defer(() -> Mono.error(new RuntimeException())))
-//        .map(value -> UserMapper.INSTANCE.map(userDto))
-//        .(value -> value.setUpdateDate(LocalDateTime.now()))
-//    ;
-    User user = UserMapper.INSTANCE.map(userDto);
-    user.setUpdateDate(LocalDateTime.now());
-    return userService.save(user);
+
+    return userService.getByUserName(username)
+        .switchIfEmpty(Mono.defer(() -> Mono.error(new RuntimeException())))
+        .map(value -> UserMapper.INSTANCE.from(userDto))
+        .map(value -> {
+          value.setUpdateDate(LocalDateTime.now());
+          return value;
+        })
+        .flatMap(userService::save)
+        .map(UserMapper.INSTANCE::to);
   }
 
   @PostMapping
-  public Mono<User> save(@RequestBody UserCreateDto userDto) {
-    User user = UserMapper.INSTANCE.map(userDto);
+  public Mono<UserDto> save(@RequestBody UserCreateDto userDto) {
+    User user = UserMapper.INSTANCE.fromCreateDto(userDto);
+
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     user.setCreateDate(LocalDateTime.now());
     user.setUpdateDate(LocalDateTime.now());
-    return userService.save(user);
+
+    return userService.save(user)
+        .map(UserMapper.INSTANCE::to);
   }
 }
