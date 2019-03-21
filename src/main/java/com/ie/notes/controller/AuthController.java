@@ -15,4 +15,12 @@ public interface AuthController {
         .filter(details -> details.getUsername().equalsIgnoreCase(username))
         .switchIfEmpty(Mono.defer(() -> Mono.error(new RuntimeException())));
   }
+
+  default Mono<String> getUsername() {
+    return ReactiveSecurityContextHolder.getContext()
+        .map(SecurityContext::getAuthentication)
+        .map(Authentication::getPrincipal)
+        .map(value -> ((UserNotesDetails) value).getUsername())
+        .switchIfEmpty(Mono.defer(() -> Mono.error(new RuntimeException())));
+  }
 }

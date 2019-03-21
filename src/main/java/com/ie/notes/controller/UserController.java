@@ -25,6 +25,11 @@ public class UserController implements AuthController {
   private final UserService userService;
   private final PasswordEncoder passwordEncoder;
 
+  @GetMapping
+  public Mono<User> get() {
+    return getUsername().flatMap(userService::getByUserName);
+  }
+
   @GetMapping("/{username}")
   public Mono<User> get(@PathVariable("username") String username) {
     return auth(username).flatMap(v -> userService.getByUserName(username));
